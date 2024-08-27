@@ -20,6 +20,9 @@ This guide provides comprehensive steps to train a LoRA model using `train_flux_
 1. **Initial Images Directory**:
     Place your training images inside the `initial_images` directory.
 
+2. **Samples Directory**:
+    Create a `samples` directory in your GitHub repository to store generated sample images.
+
 ## High-Level Overview
 
 ### Training and Deploying the LoRA Model
@@ -100,6 +103,16 @@ This script queries a trained LoRA model to generate images based on specified c
 ## Results and Access
 
 Upon completing the training and querying processes, the trained model can be accessed through the URLs provided by Replicate and Hugging Face. The images generated will be located in the `generated_images` directory, showcasing the capabilities of the fine-tuned LoRA model with added photorealism from Phlux V1.
+
+## Sample Images
+
+The following sample images demonstrate the capabilities of the trained model:
+
+- ![Sample Image 1](samples/image1.png)
+- ![Sample Image 2](samples/image2.png)
+- ![Sample Image 3](samples/image3.png)
+- ![Sample Image 4](samples/image4.png)
+- ![Sample Image 5](samples/image5.png)
 
 ## License
 
