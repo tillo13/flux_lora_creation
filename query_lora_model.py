@@ -24,7 +24,13 @@ DEFAULT_MODEL = "dev"  # Default is "dev"
 ALWAYS_PREPENDED_PROMPT = "andytillo with his epic and nicely manicured volumous beard"
 
 # Custom scene description to append to the always prepended prompt
-CUSTOM_PROMPT = "playing beach volleyball, displaying a sign that says 'Millie rules'. Medium shot. High-energy beach sports scene. Sand flying through the air as he jumps. Determination and joy on his face. The beach crowd is buzzing with excitement and cheers. Warm, sunny lighting beaming down. Best quality, vivid colors, 8k resolution, sleek textures, deep blues of the ocean, the golden sands stretching around. Massive beach atmosphere, sweeping view of the beach volleyball court, intense dynamic ambiance, the sound of waves crashing and crowd cheering filling the air."
+CUSTOM_PROMPT = "standing in a lush, enchanted forest surrounded by Totoro characters. Medium shot. The magical environment is full of vibrant, oversized trees and whimsical creatures. Soft, diffused light filters through the tree canopy, casting gentle shadows. A look of wonder and joy on his face, with Totoro standing beside him. Studio Ghibli's signature artistic style, best quality, vivid colors, 8k resolution. The scene is full of life and serenity, with the sound of forest creatures and wind rustling through the leaves. Intense dynamic ambiance, capturing the essence of Studio Ghibli's enchanting world."
+
+# Custom scene description to append to the always prepended prompt
+CUSTOM_PROMPT = "meeting Barack Obama in a formal setting. Medium shot. Both are shaking hands, looking dignified and smiling. The background shows a well-decorated conference room with American flags. The lighting is warm and professional, highlighting their faces. Dressed in business attire, conveying a sense of importance and respect. Best quality, vivid colors, 8k resolution, sleek textures. Capturing the essence of a historic and respectful meeting. Intense dynamic ambiance, the sound of respectful conversations and camera shutters filling the air."
+
+# Custom scene description to append to the always prepended prompt
+CUSTOM_PROMPT = "meeting Benjamin Franklin in a historical setting. Medium shot. Both are shaking hands, with Franklin dressed in period-accurate 18th-century attire and AndyTillo in modern clothing. The background shows a colonial-era room with wooden furniture and historical artifacts. The lighting is warm, with a mix of natural light from windows and soft indoor lighting. A look of mutual respect and curiosity on their faces. Best quality, vivid colors, 8k resolution, sleek textures. Capturing the essence of a timeless meeting across centuries. Intense dynamic ambiance, the sound of historical ambiance and conversation filling the air."
 
 # Aspect ratio for the generated image.
 # Options:
@@ -49,7 +55,7 @@ DEFAULT_WIDTH = 1024  # Example: 1024 (not used if aspect_ratio is fixed)
 DEFAULT_HEIGHT = 1024  # Example: 1024 (not used if aspect_ratio is fixed)
 
 # Number of images to output. Range: 1 to 4.
-DEFAULT_NUM_OUTPUTS = 1  # Default is 1
+DEFAULT_NUM_OUTPUTS = 4  # Default is 1
 
 # Determines how strongly the main LoRA should be applied. Sane results between 0 and 1.
 DEFAULT_LORA_SCALE = 1  # Default is 0.8
@@ -137,9 +143,9 @@ def save_images(urls, model_version, output_format):
         os.makedirs("generated_images")
         print("Directory 'generated_images' created.")
     
-    for url in urls:
+    for index, url in enumerate(urls):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        file_name = f"generated_images/{timestamp}_{model_version.split(':')[1]}.{output_format}"
+        file_name = f"generated_images/{timestamp}_{model_version.split(':')[1]}_{index}.{output_format}"
         response = requests.get(url)
         if response.status_code == 200:
             with open(file_name, 'wb') as f:
