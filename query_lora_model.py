@@ -23,14 +23,28 @@ DEFAULT_MODEL = "dev"  # Default is "dev"
 # Beard descriptor to always include in the prompt
 ALWAYS_PREPENDED_PROMPT = "andytillo with his epic and nicely manicured volumous beard"
 
-# Custom scene description to append to the always prepended prompt
-CUSTOM_PROMPT = "standing in a lush, enchanted forest surrounded by Totoro characters. Medium shot. The magical environment is full of vibrant, oversized trees and whimsical creatures. Soft, diffused light filters through the tree canopy, casting gentle shadows. A look of wonder and joy on his face, with Totoro standing beside him. Studio Ghibli's signature artistic style, best quality, vivid colors, 8k resolution. The scene is full of life and serenity, with the sound of forest creatures and wind rustling through the leaves. Intense dynamic ambiance, capturing the essence of Studio Ghibli's enchanting world."
-
-# Custom scene description to append to the always prepended prompt
-CUSTOM_PROMPT = "meeting Barack Obama in a formal setting. Medium shot. Both are shaking hands, looking dignified and smiling. The background shows a well-decorated conference room with American flags. The lighting is warm and professional, highlighting their faces. Dressed in business attire, conveying a sense of importance and respect. Best quality, vivid colors, 8k resolution, sleek textures. Capturing the essence of a historic and respectful meeting. Intense dynamic ambiance, the sound of respectful conversations and camera shutters filling the air."
-
-# Custom scene description to append to the always prepended prompt
-CUSTOM_PROMPT = "meeting Benjamin Franklin in a historical setting. Medium shot. Both are shaking hands, with Franklin dressed in period-accurate 18th-century attire and AndyTillo in modern clothing. The background shows a colonial-era room with wooden furniture and historical artifacts. The lighting is warm, with a mix of natural light from windows and soft indoor lighting. A look of mutual respect and curiosity on their faces. Best quality, vivid colors, 8k resolution, sleek textures. Capturing the essence of a timeless meeting across centuries. Intense dynamic ambiance, the sound of historical ambiance and conversation filling the air."
+# List of custom scene prompts to test
+CUSTOM_PROMPTS = [
+    "standing on the deck of the Titanic with Rose. Medium shot. Both are spreading their arms wide, looking joyful and free. The background shows the vast ocean and the ship. Warm, golden lighting from the sunset, best quality, vivid colors, 8k resolution. Capturing the essence of the iconic 'I'm the king of the world' moment. Intense dynamic ambiance, with the sound of the ocean waves and wind.",
+    
+    "on the basketball court with Michael Jordan during the 1996 NBA Finals. Action shot. Both are in mid-air, going for a slam dunk. The background shows a packed stadium with cheering fans. Bright stadium lighting, best quality, vivid colors, 8k resolution. Capturing the intensity and excitement of the game. Intense dynamic ambiance, with the sound of the crowd and the bounce of the basketball.",
+    
+    "in the Star Wars universe, wielding a lightsaber. Action shot. AndyTillo is in a fierce battle with Darth Vader. The background shows a futuristic spaceship interior. Dramatic lighting, best quality, vivid colors, 8k resolution. Capturing the essence of an epic lightsaber duel. Intense dynamic ambiance, with the sound of lightsabers clashing and the hum of the spaceship.",
+    
+    "in the world of Harry Potter, casting a spell. Medium shot. AndyTillo is waving a wand, with magical sparks flying out. The background shows the Hogwarts castle. Mystical lighting, best quality, vivid colors, 8k resolution. Capturing the essence of the magical world of Harry Potter. Intense dynamic ambiance, with the sound of spell-casting and mystical creatures.",
+    
+    "running with Forrest Gump on the road. Action shot. Both are in mid-stride, with the background showing a scenic landscape with mountains and fields. Natural daylight, best quality, vivid colors, 8k resolution. Capturing the essence of the iconic running scene from Forrest Gump. Intense dynamic ambiance, with the sound of footsteps and nature.",
+    
+    "on a football field with Lionel Messi. Action shot. Both are about to kick a soccer ball towards the goal. The background shows a stadium with cheering fans. Bright stadium lighting, best quality, vivid colors, 8k resolution. Capturing the intensity and excitement of a soccer match. Intense dynamic ambiance, with the sound of the crowd and the ball being kicked.",
+    
+    "dancing with John Travolta in the famous 'Pulp Fiction' dance scene. Medium shot. Both are striking a classic dance pose. The background shows a retro diner. Warm, colorful lighting, best quality, vivid colors, 8k resolution. Capturing the essence of the iconic dance scene. Intense dynamic ambiance, with the sound of music and people chatting.",
+    
+    "riding a dragon with Daenerys Targaryen. Action shot. Both are in mid-air, with the background showing an epic fantasy landscape with castles and mountains. Dramatic, fiery lighting, best quality, vivid colors, 8k resolution. Capturing the essence of an epic fantasy adventure. Intense dynamic ambiance, with the sound of dragon wings flapping and roaring.",
+    
+    "sitting on the Iron Throne from Game of Thrones. Medium shot. AndyTillo is holding a royal scepter, looking regal and powerful. The background shows the throne room with torches and banners. Dramatic lighting, best quality, vivid colors, 8k resolution. Capturing the essence of a powerful ruler on the Iron Throne. Intense dynamic ambiance, with the sound of a royal court in session.",
+    
+    "on the set of Friends, sitting on the iconic Central Perk couch. Medium shot. AndyTillo is surrounded by the main cast of Friends, all laughing and chatting. The background shows the cozy coffee shop interior. Warm, friendly lighting, best quality, vivid colors, 8k resolution. Capturing the essence of the beloved TV show Friends. Intense dynamic ambiance, with the sound of friends chatting and coffee being made."
+]
 
 # Aspect ratio for the generated image.
 # Options:
@@ -97,18 +111,15 @@ def initialize_client():
     return client
 
 # Run the model using Replicate's API
-def run_model(client, model_version, model=DEFAULT_MODEL, prompt=None, aspect_ratio=DEFAULT_ASPECT_RATIO, width=DEFAULT_WIDTH,
+def run_model(client, model_version, prompt, model=DEFAULT_MODEL, aspect_ratio=DEFAULT_ASPECT_RATIO, width=DEFAULT_WIDTH,
               height=DEFAULT_HEIGHT, num_outputs=DEFAULT_NUM_OUTPUTS, lora_scale=DEFAULT_LORA_SCALE, num_inference_steps=DEFAULT_NUM_INFERENCE_STEPS,
               guidance_scale=DEFAULT_GUIDANCE_SCALE, seed=DEFAULT_SEED, output_format=DEFAULT_OUTPUT_FORMAT, output_quality=DEFAULT_OUTPUT_QUALITY,
               extra_lora_scale=DEFAULT_EXTRA_LORA_SCALE, extra_lora=DEFAULT_EXTRA_LORA, disable_safety_checker=DEFAULT_DISABLE_SAFETY_CHECKER):
-    print("Running the model...")
+    print(f"Running model with prompt: {prompt}...")
 
     if seed == 0:
         seed = random.randint(1, 1_000_000)
         print(f"Random seed generated: {seed}")
-    
-    if prompt is None:
-        prompt = CUSTOM_PROMPT
 
     full_prompt = f"{ALWAYS_PREPENDED_PROMPT} {prompt}"
     
@@ -138,14 +149,14 @@ def run_model(client, model_version, model=DEFAULT_MODEL, prompt=None, aspect_ra
     return output
 
 # Save the generated images
-def save_images(urls, model_version, output_format):
+def save_images(urls, model_version, prompt, output_format):
     if not os.path.exists("generated_images"):
         os.makedirs("generated_images")
         print("Directory 'generated_images' created.")
     
     for index, url in enumerate(urls):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        file_name = f"generated_images/{timestamp}_{model_version.split(':')[1]}_{index}.{output_format}"
+        file_name = f"generated_images/{timestamp}_{model_version.split(':')[1]}_{index}_prompt_{CUSTOM_PROMPTS.index(prompt)}.{output_format}"
         response = requests.get(url)
         if response.status_code == 200:
             with open(file_name, 'wb') as f:
@@ -161,14 +172,15 @@ def main():
 
     client = initialize_client()
     
-    # Run the model with the combined prompt
-    output = run_model(client, MODEL_VERSION)
-    
-    print("Output URLs:")
-    for url in output:
-        print(url)
-    
-    save_images(output, MODEL_VERSION, DEFAULT_OUTPUT_FORMAT)
+    # Loop through each prompt in the CUSTOM_PROMPTS list
+    for prompt in CUSTOM_PROMPTS:
+        output = run_model(client, MODEL_VERSION, prompt)
+        
+        print("Output URLs:")
+        for url in output:
+            print(url)
+        
+        save_images(output, MODEL_VERSION, prompt, DEFAULT_OUTPUT_FORMAT)
     
     end_time = time.time()
     total_time = end_time - start_time
